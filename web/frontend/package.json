@@ -1,0 +1,27 @@
+{
+  "name": "recommend-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd ../backend && mvn spring-boot:run",
+    "client": "vite"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "axios": "^1.6.0",
+    "echarts": "^5.4.3",
+    "echarts-liquidfill": "^3.1.0",
+    "element-plus": "^2.4.2",
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.8.0",
+    "@vitejs/plugin-vue": "^4.4.0",
+    "concurrently": "^8.2.2",
+    "vite": "^5.0.0"
+  }
+}

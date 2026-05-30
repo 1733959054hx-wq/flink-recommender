@@ -1,0 +1,28 @@
+2026-05-28 17:16:17 [INFO] ========================================
+2026-05-28 17:16:17 [INFO] 开始模型离线评测
+2026-05-28 17:16:17 [INFO] 模型路径: C:\Users\天才的海\Desktop\AI相关\python机械学习\大项目\big-project-of-PML\web\backend\src\main\java\com\recommend\evaluating\model\recommend_model_champion.pmml
+2026-05-28 17:16:17 [INFO] Step 1: 加载测试集
+2026-05-28 17:16:18 [INFO] 测试集加载完成: 总记录 151106 条, 正样本 2996 条, 用户 4884 个, 商品 105257 个
+2026-05-28 17:16:18 [INFO] Step 2: 加载用户特征
+2026-05-28 17:16:18 [INFO] 用户特征加载完成: 4889 条, buy_rate 均值 0.0409, active_score 均值 0.81
+2026-05-28 17:16:18 [INFO] Step 3: 计算历史交互特征
+2026-05-28 17:16:18 [INFO] 待查询的 user-item 对数: 134158
+2026-05-28 17:16:23 [INFO] 交互特征计算完成: 有交互 35149 对 (26.20%), pv_count_5min 均值 0.49, is_cart_or_fav 占比 5.09%
+2026-05-28 17:16:23 [INFO] Step 4: 特征工程
+2026-05-28 17:16:24 [INFO] 特征工程完成: 151106 样本, 正样本 2996 条, 特征列: ['user_id', 'label', 'buy_rate', 'active_score', 'category_match', 'pv_count_5min', 'is_cart_or_fav']
+2026-05-28 17:16:24 [INFO] Step 5: 模型预测, 模型路径: C:\Users\天才的海\Desktop\AI相关\python机械学习\大项目\big-project-of-PML\web\backend\src\main\java\com\recommend\evaluating\model\recommend_model_champion.pmml
+2026-05-28 17:16:26 [INFO] 模型输入字段: ['buy_rate', 'active_score', 'pv_count_5min', 'is_cart_or_fav', 'category_match']
+2026-05-28 17:20:36 [INFO] ========================================
+2026-05-28 17:20:36 [INFO] 开始模型离线评测
+2026-05-28 17:20:36 [INFO] 模型路径: C:\Users\天才的海\Desktop\AI相关\python机械学习\大项目\big-project-of-PML\web\backend\src\main\java\com\recommend\evaluating\model\recommend_model_champion.pmml
+2026-05-28 17:20:36 [INFO] Step 1: 加载测试集
+2026-05-28 17:20:36 [INFO] 测试集加载完成: 总记录 151106 条, 正样本 2996 条, 用户 4884 个, 商品 105257 个
+2026-05-28 17:20:36 [INFO] Step 2: 加载用户特征
+2026-05-28 17:20:36 [INFO] 用户特征加载完成: 4889 条, buy_rate 均值 0.0409, active_score 均值 0.81
+2026-05-28 17:20:36 [INFO] Step 3: 计算历史交互特征
+2026-05-28 17:20:36 [INFO] 待查询的 user-item 对数: 134158
+2026-05-28 17:20:41 [INFO] 交互特征计算完成: 有交互 35149 对 (26.20%), pv_count_5min 均值 0.49, is_cart_or_fav 占比 5.09%
+2026-05-28 17:20:41 [INFO] Step 4: 特征工程
+2026-05-28 17:20:42 [INFO] 特征工程完成: 151106 样本, 正样本 2996 条, 特征列: ['user_id', 'label', 'buy_rate', 'active_score', 'category_match', 'pv_count_5min', 'is_cart_or_fav']
+2026-05-28 17:20:42 [INFO] Step 5: 模型预测, 模型路径: C:\Users\天才的海\Desktop\AI相关\python机械学习\大项目\big-project-of-PML\web\backend\src\main\java\com\recommend\evaluating\model\recommend_model_champion.pmml
+2026-05-28 17:20:43 [INFO] 模型输入字段: ['buy_rate', 'active_score', 'pv_count_5min', 'is_cart_or_fav', 'category_match']

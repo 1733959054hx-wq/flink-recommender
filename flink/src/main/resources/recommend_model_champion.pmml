@@ -1,0 +1,1839 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_4" xmlns:data="http://jpmml.org/jpmml-model/InlineTable" version="4.4">
+	<Header>
+		<Application name="JPMML-SkLearn library" version="1.7.4"/>
+		<Timestamp>2026-05-20T01:42:02Z</Timestamp>
+	</Header>
+	<DataDictionary>
+		<DataField name="buy_label" optype="categorical" dataType="integer">
+			<Value value="0"/>
+			<Value value="1"/>
+		</DataField>
+		<DataField name="buy_rate" optype="continuous" dataType="double"/>
+		<DataField name="active_score" optype="continuous" dataType="double"/>
+		<DataField name="pv_count_5min" optype="continuous" dataType="double"/>
+		<DataField name="is_cart_or_fav" optype="continuous" dataType="double"/>
+		<DataField name="category_match" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<MiningModel functionName="classification" algorithmName="sklearn.ensemble._gb.GradientBoostingClassifier">
+		<MiningSchema>
+			<MiningField name="buy_label" usageType="target"/>
+			<MiningField name="buy_rate" missingValueReplacement="0.0" missingValueTreatment="asValue"/>
+			<MiningField name="active_score" missingValueReplacement="0.0" missingValueTreatment="asValue"/>
+			<MiningField name="pv_count_5min" missingValueReplacement="0.0" missingValueTreatment="asValue"/>
+			<MiningField name="is_cart_or_fav" missingValueReplacement="0.0" missingValueTreatment="asValue"/>
+			<MiningField name="category_match" missingValueReplacement="0.0" missingValueTreatment="asValue"/>
+		</MiningSchema>
+		<Segmentation multipleModelMethod="modelChain" missingPredictionTreatment="returnMissing">
+			<Segment id="1">
+				<True/>
+				<MiningModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="pv_count_5min"/>
+						<MiningField name="buy_rate"/>
+						<MiningField name="is_cart_or_fav"/>
+						<MiningField name="category_match"/>
+						<MiningField name="active_score"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(1)" optype="continuous" dataType="double" isFinalResult="false"/>
+						<OutputField name="sigmoid(decisionFunction(1))" optype="continuous" dataType="double" feature="transformedValue" isFinalResult="false">
+							<Apply function="/">
+								<Constant dataType="double">1.0</Constant>
+								<Apply function="+">
+									<Constant dataType="double">1.0</Constant>
+									<Apply function="exp">
+										<Apply function="*">
+											<Constant dataType="double">-1.0</Constant>
+											<FieldRef field="decisionFunction(1)"/>
+										</Apply>
+									</Apply>
+								</Apply>
+							</Apply>
+						</OutputField>
+					</Output>
+					<Targets>
+						<Target rescaleConstant="-1.0986122886681098" rescaleFactor="0.1"/>
+					</Targets>
+					<LocalTransformations>
+						<DerivedField name="float(buy_rate)" optype="continuous" dataType="float">
+							<FieldRef field="buy_rate"/>
+						</DerivedField>
+						<DerivedField name="float(active_score)" optype="continuous" dataType="float">
+							<FieldRef field="active_score"/>
+						</DerivedField>
+						<DerivedField name="float(pv_count_5min)" optype="continuous" dataType="float">
+							<FieldRef field="pv_count_5min"/>
+						</DerivedField>
+						<DerivedField name="float(is_cart_or_fav)" optype="continuous" dataType="float">
+							<FieldRef field="is_cart_or_fav"/>
+						</DerivedField>
+						<DerivedField name="float(category_match)" optype="continuous" dataType="float">
+							<FieldRef field="category_match"/>
+						</DerivedField>
+						<DerivedField name="double(float(pv_count_5min))" optype="continuous" dataType="double">
+							<FieldRef field="float(pv_count_5min)"/>
+						</DerivedField>
+						<DerivedField name="double(float(buy_rate))" optype="continuous" dataType="double">
+							<FieldRef field="float(buy_rate)"/>
+						</DerivedField>
+						<DerivedField name="double(float(is_cart_or_fav))" optype="continuous" dataType="double">
+							<FieldRef field="float(is_cart_or_fav)"/>
+						</DerivedField>
+						<DerivedField name="double(float(category_match))" optype="continuous" dataType="double">
+							<FieldRef field="float(category_match)"/>
+						</DerivedField>
+						<DerivedField name="double(float(active_score))" optype="continuous" dataType="double">
+							<FieldRef field="float(active_score)"/>
+						</DerivedField>
+					</LocalTransformations>
+					<Segmentation multipleModelMethod="sum">
+						<Segment id="1">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+								</MiningSchema>
+								<Node score="3.110426296866975">
+									<True/>
+									<Node score="2.1329715061058345">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.5725139058472392">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.054349999874830246"/>
+											<Node score="-1.2213775104958584">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0168499993160367"/>
+											</Node>
+										</Node>
+										<Node score="0.4781420765027322">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.1383500024676323"/>
+										</Node>
+									</Node>
+									<Node score="0.6146830825353398">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.011549999937415123"/>
+										<Node score="-1.27512505684402">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0029999999096617103"/>
+										</Node>
+									</Node>
+									<Node score="1.8724014336917563">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.03464999981224537"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="2">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+								</MiningSchema>
+								<Node score="2.6543367177295702">
+									<True/>
+									<Node score="1.7307037006486923">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.6029405615040365">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.054349999874830246"/>
+											<Node score="-1.2261716684879596">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.012149999849498272"/>
+											</Node>
+										</Node>
+										<Node score="0.41978762562077754">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.1383500024676323"/>
+										</Node>
+									</Node>
+									<Node score="0.6786507679604603">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.015250000171363354"/>
+										<Node score="-1.2312018244073237">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0029999999096617103"/>
+										</Node>
+									</Node>
+									<Node score="1.693940838646325">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="3">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+								</MiningSchema>
+								<Node score="2.040084282064812">
+									<True/>
+									<Node score="1.7866975151570432">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.24883087636676748">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.053449999541044235"/>
+											<Node score="-1.042949269189244">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.029450000263750553"/>
+											</Node>
+										</Node>
+										<Node score="0.4388916494787909">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.1785000041127205"/>
+										</Node>
+									</Node>
+									<Node score="0.24144731936870187">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.009150000289082527"/>
+										<Node score="-1.216740883651085">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0013000000035390258"/>
+										</Node>
+									</Node>
+									<Node score="1.1728008495470539">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.03350000083446503"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="4">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+								</MiningSchema>
+								<Node score="1.9700852026786784">
+									<True/>
+									<Node score="-1.4401492415487194">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.124443576660696">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.07660000026226044"/>
+											<Node score="-0.9974989743924191">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0302500007674098"/>
+											</Node>
+										</Node>
+										<Node score="1.01045241900833">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.5909900215547275">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.019899999722838402"/>
+										<Node score="-1.158931963375769">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0029999999096617103"/>
+										</Node>
+									</Node>
+									<Node score="1.2892579000830844">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="5">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+								</MiningSchema>
+								<Node score="1.562775840009286">
+									<True/>
+									<Node score="-1.3933360322692232">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.09998767224009102">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.08605000004172325"/>
+											<Node score="-0.9629030631442171">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.029450000263750553"/>
+											</Node>
+										</Node>
+										<Node score="0.9984150075742956">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.15628377505266583">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.009150000289082527"/>
+										<Node score="-1.1550465522457503">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0013000000035390258"/>
+										</Node>
+									</Node>
+									<Node score="0.8851815093345907">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.03464999981224537"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="6">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+								</MiningSchema>
+								<Node score="1.5429070310500557">
+									<True/>
+									<Node score="1.276275485938714">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.42284394413833626">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.054349999874830246"/>
+											<Node score="-1.1040486280955726">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.012149999849498272"/>
+											</Node>
+										</Node>
+										<Node score="0.3078255522264322">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.1785000041127205"/>
+										</Node>
+									</Node>
+									<Node score="1.0610277373945052">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.014349999837577343"/>
+										<Node score="-0.4577473793821961">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+										</Node>
+									</Node>
+									<Node score="0.8716596236499897">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="7">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+								</MiningSchema>
+								<Node score="1.33896940368734">
+									<True/>
+									<Node score="-1.3652205140042692">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.21944971738755603">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.08605000004172325"/>
+											<Node score="-1.0022370237016944">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.01759999990463257"/>
+											</Node>
+										</Node>
+										<Node score="0.7979954471785703">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.022348874538677264">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.007449999917298555"/>
+										<Node score="-1.1232873514176678">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0013000000035390258"/>
+										</Node>
+									</Node>
+									<Node score="0.6766639124606817">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="8">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+								</MiningSchema>
+								<Node score="1.406219284351638">
+									<True/>
+									<Node score="-1.346314691679201">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.3673685737071262">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.053449999541044235"/>
+											<Node score="-1.0530976146030755">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.012149999849498272"/>
+											</Node>
+										</Node>
+										<Node score="0.47301689620583154">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.9637034635806296">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.020049999468028545"/>
+										<Node score="-0.3016595438590551">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+										</Node>
+									</Node>
+									<Node score="0.8512371507503417">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.06689999997615814"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="9">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+								</MiningSchema>
+								<Node score="1.3968178059548444">
+									<True/>
+									<Node score="1.4231542067766232">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.031480459442247026">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.09405000135302544"/>
+											<Node score="-0.8269019778289424">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0302500007674098"/>
+											</Node>
+										</Node>
+										<Node score="0.51063645211822">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.2898999899625778"/>
+										</Node>
+									</Node>
+									<Node score="0.6104578090877995">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.021199999377131462"/>
+										<Node score="-0.4369649626147962">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+										</Node>
+									</Node>
+									<Node score="0.8186177831535859">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="10">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="1.1154064958764498">
+									<True/>
+									<Node score="-0.6201387790770657">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.43326569141702015">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.03680000081658363"/>
+											<Node score="-1.0511146570720706">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.009650000371038914"/>
+											</Node>
+										</Node>
+										<Node score="0.34433239591115417">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.03562138766934249">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.007449999917298555"/>
+										<Node score="-1.0971729737279172">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0013000000035390258"/>
+										</Node>
+									</Node>
+									<Node score="0.5236885572697786">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.05140000022947788"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="11">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+								</MiningSchema>
+								<Node score="1.1571340746359702">
+									<True/>
+									<Node score="0.9606787970531326">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+										<Node score="-0.1861200438543734">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.05485000088810921"/>
+											<Node score="-0.9730450466452383">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.010449999943375587"/>
+											</Node>
+										</Node>
+										<Node score="0.29985420336567253">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										</Node>
+									</Node>
+									<Node score="-1.1936627041233678">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.002699999953620136"/>
+										<Node score="-1.1438106377172872">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+										</Node>
+									</Node>
+									<Node score="0.7630463377599728">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="12">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+								</MiningSchema>
+								<Node score="1.0840166598453833">
+									<True/>
+									<Node score="-1.3204315137132578">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.14432915527600254">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.09405000135302544"/>
+											<Node score="-0.885231816936072">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0168499993160367"/>
+											</Node>
+										</Node>
+										<Node score="0.5833083992916238">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.03549713716652115">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.007449999917298555"/>
+										<Node score="-1.0563337689964825">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0013000000035390258"/>
+										</Node>
+									</Node>
+									<Node score="0.4819573477767342">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="13">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="1.0884205763391006">
+									<True/>
+									<Node score="0.639052655571396">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0302500007674098"/>
+										<Node score="-1.048987858510112">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+											<Node score="-0.5079902453269809">
+												<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="-1.1345334748131948">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.002699999953620136"/>
+										</Node>
+									</Node>
+									<Node score="-0.6166465842789496">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="0.24810426707344338">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.6474760270804383">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.08469999954104424"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="14">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="0.5151331599549546">
+									<True/>
+									<Node score="1.0529751095113864">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+										<Node score="-0.10573171627894307">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.07339999824762344"/>
+											<Node score="-0.9126569128354203">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.010449999943375587"/>
+											</Node>
+										</Node>
+										<Node score="0.3736812909321514">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.22110000252723694"/>
+										</Node>
+									</Node>
+									<Node score="-1.1391608700738498">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.002699999953620136"/>
+										<Node score="-1.1030309707761121">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+										</Node>
+									</Node>
+									<Node score="0.888673044567678">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="15">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+								</MiningSchema>
+								<Node score="0.9202007116235009">
+									<True/>
+									<Node score="-1.303894782646432">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.1329307026592379">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.09919999912381172"/>
+											<Node score="-0.8781629207209887">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.014050000347197056"/>
+											</Node>
+										</Node>
+										<Node score="0.4875054363605051">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.49741710938086636">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.019899999722838402"/>
+										<Node score="-0.22233212321758078">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+										</Node>
+									</Node>
+									<Node score="0.4628711201377192">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.06689999997615814"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="16">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="0.3444213438009378">
+									<True/>
+									<Node score="0.680664475756728">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0302500007674098"/>
+										<Node score="-0.998109673156196">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+											<Node score="-0.34640253871970056">
+												<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="-1.1305440435273852">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.002699999953620136"/>
+										</Node>
+									</Node>
+									<Node score="-1.2775183967650923">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="0.1634595212943615">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.7421686794908202">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="17">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="0.41705844031757605">
+									<True/>
+									<Node score="1.106276399527743">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+										<Node score="-0.858624823602358">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.09919999912381172"/>
+											<Node score="-0.13944737366232768">
+												<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="0.4029256056649978">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.295199990272522"/>
+										</Node>
+									</Node>
+									<Node score="0.11855719552339407">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.004149999935179949"/>
+										<Node score="-1.1002867101660614">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.002699999953620136"/>
+										</Node>
+									</Node>
+									<Node score="0.7650644052297235">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="18">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+								</MiningSchema>
+								<Node score="0.947391418708317">
+									<True/>
+									<Node score="0.5982616931766621">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.034849999472498894"/>
+										<Node score="-0.1313024617761647">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+											<Node score="-0.8559640908712728">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.008849999867379665"/>
+											</Node>
+										</Node>
+										<Node score="-1.1045266033027759">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.002699999953620136"/>
+										</Node>
+									</Node>
+									<Node score="-1.2478508649557138">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="0.16539257086385914">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.5431187310022518">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.11585000157356262"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="19">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="0.01745811042266997">
+									<True/>
+									<Node score="1.4652386833670106">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="0.016227558705364256">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.1785000041127205"/>
+											<Node score="-0.5801530507000654">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.029450000263750553"/>
+											</Node>
+										</Node>
+										<Node score="0.5128687206478267">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.683349996805191"/>
+										</Node>
+									</Node>
+									<Node score="-0.06329236371616967">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.006649999879300594"/>
+										<Node score="-0.967885067046253">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0013000000035390258"/>
+										</Node>
+									</Node>
+									<Node score="0.5196428646075391">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="20">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="0.8079659783760466">
+									<True/>
+									<Node score="-0.24027032255551736">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+										<Node score="-0.824705989062624">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.07339999824762344"/>
+											<Node score="-0.14311559637907728">
+												<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="0.4107290594987788">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.8312698262223173">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0029999999096617103"/>
+										<Node score="-1.0806070161364105">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="11.5"/>
+										</Node>
+									</Node>
+									<Node score="0.3477621578673702">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.03350000083446503"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="21">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.8228082504826024">
+									<True/>
+									<Node score="0.5083424202877819">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.019300000742077827"/>
+										<Node score="-0.9607577506490844">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.004149999935179949"/>
+											<Node score="0.9935710462841966">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.0950000025331974"/>
+											</Node>
+										</Node>
+										<Node score="-0.19180474367758688">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="4.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.6311903662155913">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="0.12905692138861657">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.3162687698052381">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="22">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="0.8295993540031653">
+									<True/>
+									<Node score="0.4892921450060669">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.034849999472498894"/>
+										<Node score="-0.8606468203502557">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+											<Node score="-0.20514022171372512">
+												<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="-0.2548166806433722">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.006049999967217445"/>
+										</Node>
+									</Node>
+									<Node score="-1.2232222836978455">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="0.13274113899993195">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.41506647871719465">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.11585000157356262"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="23">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="0.4062969861301769">
+									<True/>
+									<Node score="0.9448193848578927">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-1.1323715700813797">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.1785000041127205"/>
+											<Node score="-0.17408043778437626">
+												<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="0.34268520314749473">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.36420001089572906"/>
+										</Node>
+									</Node>
+									<Node score="0.415069822496977">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										<Node score="-0.7162120910019248">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.004050000105053186"/>
+										</Node>
+									</Node>
+									<Node score="-0.3827276148828946">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="24">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.6894052746894432">
+									<True/>
+									<Node score="0.2951831049193194">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.015350000001490116"/>
+										<Node score="-0.989511702663938">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0013000000035390258"/>
+											<Node score="0.9340001036776523">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.0950000025331974"/>
+											</Node>
+										</Node>
+										<Node score="-0.24732278913523356">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.49209104172796514">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+										<Node score="0.1626499923106653">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.32023881119839004">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.03350000083446503"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="25">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.6678061768857281">
+									<True/>
+									<Node score="-0.13335052097615174">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.034849999472498894"/>
+										<Node score="-0.08804799632524032">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+											<Node score="-0.8112175215208305">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.008849999867379665"/>
+											</Node>
+										</Node>
+										<Node score="0.35861885593739956">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.0945863243116971">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="0.30414845987380607">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.6150000095367432"/>
+										</Node>
+									</Node>
+									<Node score="0.2943929130544408">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.08469999954104424"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="26">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="1.2771124664270643">
+									<True/>
+									<Node score="-0.17062309355100796">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.029550000093877316"/>
+										<Node score="-0.10713897986073381">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+											<Node score="-0.8552555223662319">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.006850000005215406"/>
+											</Node>
+										</Node>
+										<Node score="0.30690143433167033">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.2151191921673127">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.22110000252723694"/>
+										<Node score="0.19447233111793352">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.6007994529780274">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.683349996805191"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="27">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.3487200858768371">
+									<True/>
+									<Node score="-1.1224451473487809">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="0.2561244086628155">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.6650000214576721"/>
+											<Node score="-0.8203842807566751">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.01679999940097332"/>
+											</Node>
+										</Node>
+										<Node score="-0.235460306432203">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.33187881380051815">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										<Node score="-0.6644698447913374">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.003900000127032399"/>
+										</Node>
+									</Node>
+									<Node score="-0.3249816497992485">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="28">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="1.2033266573528971">
+									<True/>
+									<Node score="0.6045116862548757">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.054349999874830246"/>
+										<Node score="-0.7000817411864644">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+											<Node score="-0.07254353911538423">
+												<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="0.09466877644231499">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.018749999813735485"/>
+										</Node>
+									</Node>
+									<Node score="0.42090751311399416">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.295199990272522"/>
+										<Node score="0.047117959835201624">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										</Node>
+									</Node>
+									<Node score="0.705006335292708">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.683349996805191"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="29">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.4090801073208042">
+									<True/>
+									<Node score="0.12351671506781425">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.012149999849498272"/>
+										<Node score="-0.9389895146129228">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0013000000035390258"/>
+											<Node score="8.31047015891573">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.03499999921768904"/>
+											</Node>
+										</Node>
+										<Node score="-0.4694038291387256">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.244526761085161">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										<Node score="0.21356002673549512">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.3789346634993208">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="30">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.8969797901552286">
+									<True/>
+									<Node score="-1.1519696227824703">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.20684677265096485">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+											<Node score="0.15619264780861314">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.6650000214576721"/>
+											</Node>
+										</Node>
+										<Node score="-1.0462833616811824">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0168499993160367"/>
+										</Node>
+									</Node>
+									<Node score="-0.22143399331177607">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.06689999997615814"/>
+										<Node score="0.19611291724696736">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.43243613652708224">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.19574999809265137"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="31">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="0.6191267627327548">
+									<True/>
+									<Node score="0.7161263667090935">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+										<Node score="-0.5896722711632666">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.1383500024676323"/>
+											<Node score="-0.06469937060928656">
+												<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="0.2289718530980072">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.295199990272522"/>
+										</Node>
+									</Node>
+									<Node score="-0.358673382441363">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.019749999977648258"/>
+										<Node score="0.195043337307535">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.3018000081141114">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="32">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.35437018171574874">
+									<True/>
+									<Node score="0.10650475054898413">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.012149999849498272"/>
+										<Node score="-0.9403674288911598">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0013000000035390258"/>
+											<Node score="1.2970377333501766">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.0950000025331974"/>
+											</Node>
+										</Node>
+										<Node score="-0.4216473737127467">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.20627106064318618">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										<Node score="0.18892910384294528">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.3456174551007915">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="33">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.8419392393480951">
+									<True/>
+									<Node score="0.8505187052824532">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="0.12488623051813298">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="1.125"/>
+											<Node score="-0.8319982565821987">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.010850000195205212"/>
+											</Node>
+										</Node>
+										<Node score="-0.33821288974811414">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.2889000028371811"/>
+										</Node>
+									</Node>
+									<Node score="-0.1944618867508366">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.06689999997615814"/>
+										<Node score="0.16885354846881556">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.39245469906987734">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.19574999809265137"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="34">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.3763375537623774">
+									<True/>
+									<Node score="0.7856518198617343">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+										<Node score="-0.5348500107664946">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.1383500024676323"/>
+											<Node score="-0.02644713935117666">
+												<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="0.2127555574792579">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.4161999970674515"/>
+										</Node>
+									</Node>
+									<Node score="-0.31248842582857134">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.019749999977648258"/>
+										<Node score="0.15585490435423757">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.9222379755496427">
+										<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.3449999988079071"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="35">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="-0.37385012318421335">
+									<True/>
+									<Node score="0.2033863999639163">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.012149999849498272"/>
+										<Node score="-0.9773938846478715">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0013000000035390258"/>
+											<Node score="-0.14353859443145187">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.2849999964237213"/>
+											</Node>
+										</Node>
+										<Node score="-0.16848148582018035">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.1067522783121168">
+										<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.6449999809265137"/>
+										<Node score="0.26439194230069296">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.05891569609970857">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="36">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.737352128900124">
+									<True/>
+									<Node score="-1.128103778617216">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.25547719237362954">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+											<Node score="0.06460676249305544">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="1.125"/>
+											</Node>
+										</Node>
+										<Node score="-1.0368097558533735">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0168499993160367"/>
+										</Node>
+									</Node>
+									<Node score="-0.14038921328169598">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.06689999997615814"/>
+										<Node score="0.1419251667564752">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.3511536478011928">
+										<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="1.7299999594688416"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="37">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+								</MiningSchema>
+								<Node score="0.7580801368327424">
+									<True/>
+									<Node score="-0.5128724365104194">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+										<Node score="0.06576948874631673">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+											<Node score="-0.6283677738338429">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.009550000075250864"/>
+											</Node>
+										</Node>
+										<Node score="-0.35036048468044756">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.016549999825656414"/>
+										</Node>
+									</Node>
+									<Node score="0.4215080003605058">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.03350000083446503"/>
+										<Node score="0.016635884240302587">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="6.5"/>
+										</Node>
+									</Node>
+									<Node score="0.40189419527407105">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="4.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="38">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+								</MiningSchema>
+								<Node score="0.7635305638300353">
+									<True/>
+									<Node score="1.4090745693677897">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-1.0918011769139935">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+											<Node score="0.009391537924367649">
+												<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="-0.5710246210159106">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.6500000059604645"/>
+										</Node>
+									</Node>
+									<Node score="-0.1399194985253987">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.06769999861717224"/>
+										<Node score="0.13008088948724691">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="0.30829153177679536">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.19574999809265137"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="39">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="-0.3411413274854441">
+									<True/>
+									<Node score="-0.5708030048859227">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0062500000931322575"/>
+										<Node score="1.0771255441337526">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.0950000025331974"/>
+											<Node score="3.896772943690013">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.03499999921768904"/>
+											</Node>
+										</Node>
+										<Node score="-0.6764935480488118">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="8.5"/>
+										</Node>
+									</Node>
+									<Node score="1.0534495966103656">
+										<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.6449999809265137"/>
+										<Node score="0.18850775960686333">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.683349996805191"/>
+										</Node>
+									</Node>
+									<Node score="0.045249836465940295">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="40">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.7738747946588247">
+									<True/>
+									<Node score="-0.5404323926844412">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+										<Node score="-0.35566718795834595">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+											<Node score="0.05576477922462582">
+												<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="-0.02127995356339179">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.6050000190734863"/>
+										</Node>
+									</Node>
+									<Node score="0.4397307126811686">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.006649999879300594"/>
+										<Node score="-0.7097042491598204">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="2.284999966621399"/>
+										</Node>
+									</Node>
+									<Node score="0.3173144701522802">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="8.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="41">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.22830910587696382">
+									<True/>
+									<Node score="0.7771611141835869">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="0.08933919997641304">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="1.125"/>
+											<Node score="-0.7581928659920273">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.010850000195205212"/>
+											</Node>
+										</Node>
+										<Node score="-0.26377910324776643">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.2889000028371811"/>
+										</Node>
+									</Node>
+									<Node score="0.2869759915822535">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.038349999114871025"/>
+										<Node score="-0.0011955842948287404">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="4.5"/>
+										</Node>
+									</Node>
+									<Node score="1.2594132642254052">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.038750000298023224"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="42">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.8032727616087345">
+									<True/>
+									<Node score="-1.0966459293175506">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.22509089754127973">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+											<Node score="0.0464403045325903">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="1.2350000143051147"/>
+											</Node>
+										</Node>
+										<Node score="-1.0274762695274655">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0168499993160367"/>
+										</Node>
+									</Node>
+									<Node score="0.32767549512421185">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.08469999954104424"/>
+										<Node score="0.02673548132818386">
+											<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="4.5"/>
+										</Node>
+									</Node>
+									<Node score="0.20856236806490017">
+										<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.9200000166893005"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="43">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.21890113833504163">
+									<True/>
+									<Node score="-0.8088009060776052">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.004299999913200736"/>
+										<Node score="1.0003375320222943">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.0950000025331974"/>
+											<Node score="2.7161241475326947">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.03499999921768904"/>
+											</Node>
+										</Node>
+										<Node score="-0.16445820645006723">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.2849999964237213"/>
+										</Node>
+									</Node>
+									<Node score="-0.1790823654329589">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+										<Node score="0.11566447505594446">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+										</Node>
+									</Node>
+									<Node score="-0.2878840663399847">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="3.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="44">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.3789749863251561">
+									<True/>
+									<Node score="1.011438994351458">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+										<Node score="-0.3734622295737718">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.22110000252723694"/>
+											<Node score="-0.009738306024692937">
+												<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="0.30828268525447955">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.683349996805191"/>
+										</Node>
+									</Node>
+									<Node score="0.28035373749281517">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.03350000083446503"/>
+										<Node score="0.0012999071544138137">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="2.5749999284744263"/>
+										</Node>
+									</Node>
+									<Node score="0.6046773319533657">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.04090000130236149"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="45">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.7634043369782197">
+									<True/>
+									<Node score="-1.0859892464815801">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="-0.2054660830296943">
+											<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+											<Node score="0.04240910203950347">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="1.2350000143051147"/>
+											</Node>
+										</Node>
+										<Node score="-1.0243934331380398">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0168499993160367"/>
+										</Node>
+									</Node>
+									<Node score="0.04033968278281004">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.08469999954104424"/>
+										<Node score="0.5775509443255216">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.36500000953674316"/>
+										</Node>
+									</Node>
+									<Node score="0.18740291302053436">
+										<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.9200000166893005"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="46">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="-0.29179902354051107">
+									<True/>
+									<Node score="-0.9449994872827738">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0013000000035390258"/>
+										<Node score="0.8276632836983787">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.0950000025331974"/>
+											<Node score="2.034747630674655">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.03499999921768904"/>
+											</Node>
+										</Node>
+										<Node score="-0.15005296090488401">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.2849999964237213"/>
+										</Node>
+									</Node>
+									<Node score="0.15696623429117354">
+										<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.6449999809265137"/>
+										<Node score="-1.6220608123146778">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.01679999940097332"/>
+										</Node>
+									</Node>
+									<Node score="0.035314365528227976">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="47">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(is_cart_or_fav))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.05537653645321427">
+									<True/>
+									<Node score="0.8428378596645514">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="2.5"/>
+										<Node score="-0.36777963290572574">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.295199990272522"/>
+											<Node score="-0.017573885291419386">
+												<SimplePredicate field="double(float(is_cart_or_fav))" operator="lessOrEqual" value="0.5"/>
+											</Node>
+										</Node>
+										<Node score="0.3855134065565918">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="1.2899999916553497"/>
+										</Node>
+									</Node>
+									<Node score="0.47009809705545247">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.019749999977648258"/>
+										<Node score="-0.057970757864533574">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="3.034999966621399"/>
+										</Node>
+									</Node>
+									<Node score="0.3429013102026136">
+										<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="1.8149999976158142"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="48">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.3300091253981663">
+									<True/>
+									<Node score="0.6238802756612595">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="1.5"/>
+										<Node score="0.04464135652605051">
+											<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+											<Node score="-0.614749872004605">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.009650000371038914"/>
+											</Node>
+										</Node>
+										<Node score="-0.47233190345454623">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.3101000040769577"/>
+										</Node>
+									</Node>
+									<Node score="-1.6886997869732083">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="4.5"/>
+										<Node score="0.061992401459655594">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="4.330000162124634"/>
+										</Node>
+									</Node>
+									<Node score="-1.0528271804507696">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.002699999953620136"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="49">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(category_match))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="-0.2679346664056728">
+									<True/>
+									<Node score="-0.9305816157722497">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.0013000000035390258"/>
+										<Node score="2.5852333205529994">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.0950000025331974"/>
+											<Node score="0.31254002265342673">
+												<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.08500000089406967"/>
+											</Node>
+										</Node>
+										<Node score="-0.08807885099994477">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.2849999964237213"/>
+										</Node>
+									</Node>
+									<Node score="0.9479891981016179">
+										<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="0.6449999809265137"/>
+										<Node score="0.1279746698044411">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.683349996805191"/>
+										</Node>
+									</Node>
+									<Node score="0.02941149789385212">
+										<SimplePredicate field="double(float(category_match))" operator="lessOrEqual" value="0.5"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment id="50">
+							<True/>
+							<TreeModel functionName="regression" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnLastPrediction">
+								<MiningSchema>
+									<MiningField name="double(float(pv_count_5min))"/>
+									<MiningField name="double(float(buy_rate))"/>
+									<MiningField name="double(float(active_score))"/>
+								</MiningSchema>
+								<Node score="0.6754815547931692">
+									<True/>
+									<Node score="0.5053342786923253">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="4.5"/>
+										<Node score="0.07948613549616848">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="1.2350000143051147"/>
+											<Node score="-0.4868813275186436">
+												<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.010850000195205212"/>
+											</Node>
+										</Node>
+										<Node score="-0.1437856803540076">
+											<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.13885000348091125"/>
+										</Node>
+									</Node>
+									<Node score="-3.6652027194209356">
+										<SimplePredicate field="double(float(pv_count_5min))" operator="lessOrEqual" value="8.5"/>
+										<Node score="0.269621489618797">
+											<SimplePredicate field="double(float(active_score))" operator="lessOrEqual" value="4.120000123977661"/>
+										</Node>
+									</Node>
+									<Node score="-0.5433535726341527">
+										<SimplePredicate field="double(float(buy_rate))" operator="lessOrEqual" value="0.006199999945238233"/>
+									</Node>
+								</Node>
+							</TreeModel>
+						</Segment>
+					</Segmentation>
+				</MiningModel>
+			</Segment>
+			<Segment id="2">
+				<True/>
+				<RegressionModel functionName="classification">
+					<MiningSchema>
+						<MiningField name="buy_label" usageType="target"/>
+						<MiningField name="sigmoid(decisionFunction(1))"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="probability(0)" optype="continuous" dataType="double" feature="probability" value="0"/>
+						<OutputField name="probability(1)" optype="continuous" dataType="double" feature="probability" value="1"/>
+					</Output>
+					<RegressionTable intercept="0.0" targetCategory="1">
+						<NumericPredictor name="sigmoid(decisionFunction(1))" coefficient="1.0"/>
+					</RegressionTable>
+					<RegressionTable intercept="0.0" targetCategory="0"/>
+				</RegressionModel>
+			</Segment>
+		</Segmentation>
+	</MiningModel>
+</PMML>

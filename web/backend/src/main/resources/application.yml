@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: recommend-backend
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/recommend_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: flinkpy
+    password: 123456
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 2
+
+  # ===== 把 Kafka 配置放到 spring: 下面 =====
+  kafka:
+    bootstrap-servers: 192.168.88.161:9092
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+# 自定义配置（topic放在这里，用 @Value("${kafka.topic}") 读取）
+kafka:
+  topic: user-behavior-topic
+
+python:
+  script-dir: C:\Users\天才的海\Desktop\AI相关\python机械学习\大项目\big-project-of-PML\web\backend\src\main\java\com\recommend\evaluating\
