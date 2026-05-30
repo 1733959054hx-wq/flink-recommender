@@ -1,0 +1,82 @@
+先在一号机窗口
+第一步:开始监控从kafka那传来的数据
+cd /export/server/flink
+bin/sql-client.sh
+
+CREATE TABLE user_behavior (
+    user_id BIGINT,
+    item_id BIGINT,
+    category_id BIGINT,
+    behavior_type STRING,
+    ts BIGINT,
+    proctime AS PROCTIME()
+) WITH (
+    'connector' = 'kafka',
+    'topic' = 'user-behavior-topic',
+    'properties.bootstrap.servers' = 'node1.itcast.cn:9092',
+    'properties.group.id' = 'flink-consumer-group',
+    'scan.startup.mode' = 'latest-offset',
+    'format' = 'csv'
+);
+
+SELECT * FROM user_behavior;
+
+
+第二步:清空数据库
+
+-- 禁用外键检查，避免删除时因外键约束报错
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- 清空所有表数据
+TRUNCATE TABLE `eval_metrics`;
+TRUNCATE TABLE `recommendations`;
+TRUNCATE TABLE `user_behavior`;
+TRUNCATE TABLE `item_features`;
+TRUNCATE TABLE `user_features`;
+
+-- 恢复外键检查
+SET FOREIGN_KEY_CHECKS = 1;
+
+第三步:导入模拟历史数据(用户行为历史与用户特征)
+初始化文件夹里的那两个python代码，运行它们
+
+第四步:上传jar包到flink,启动前后端
+
+第五步：开水龙头(要先确定你的kafka创建了名为user-behavior-topic的topic)
+python3.6 /export/data/socket_and_its_data/data_simulator_kafka.py --kafka
+(这是我的路径,别直接粘贴复制)
+
+看情况
+select count(*)
+from user_behavior;
+
+select count(*)
+from recommendations;
+
+
+
+整个flink流程我认为有三个模块，
+第一是数据生成模块：即运行data_simulator_kafka.py往kafka特定节点输出数据
+第二是数据接收模块：即flink中的
+CREATE TABLE user_behavior (
+    user_id BIGINT,
+    item_id BIGINT,
+    category_id BIGINT,
+    behavior_type STRING,
+    ts BIGINT,
+    proctime AS PROCTIME()
+) WITH (
+    'connector' = 'kafka',
+    'topic' = 'user-behavior-topic',
+    'properties.bootstrap.servers' = 'node1.itcast.cn:9092',
+    'properties.group.id' = 'flink-consumer-group',
+    'scan.startup.mode' = 'latest-offset',
+    'format' = 'csv'
+);
+
+SELECT * FROM user_behavior;
+从kafka接收数据
+
+第三是数据处理模块
+那个jar包，它把处理好的数据传入了redis和flink
+
