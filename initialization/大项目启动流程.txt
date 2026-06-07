@@ -78,5 +78,5 @@ SELECT * FROM user_behavior;
 从kafka接收数据
 
 第三是数据处理模块
-那个jar包，它把处理好的数据传入了redis和flink
+那个jar包，它把处理好的数据传入了redis和mysql
 
