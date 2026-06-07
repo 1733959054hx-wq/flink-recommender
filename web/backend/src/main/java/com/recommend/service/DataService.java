@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.kafka.core.KafkaTemplate;
-
+import java.time.format.DateTimeFormatter;
 /**
  * 数据服务层
  * 负责推荐系统的数据分析、特征计算、模型调用等核心业务逻辑
@@ -41,6 +41,8 @@ public class DataService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;    // Redis缓存操作
 
+    // 防止整分时间datatime没有秒字段
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     // ============ Flink配置 ============
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
@@ -271,7 +273,7 @@ public class DataService {
         for (EvalMetrics metric : metrics) {
             Map<String, Object> item = new HashMap<>();
             item.put("time", metric.getCreateTime() != null
-                    ? metric.getCreateTime().toString().replace("T", " ").substring(0, 19) : "");
+                    ? metric.getCreateTime().format(TIME_FMT) : "");
             item.put("ctr", metric.getCtr() != null ? metric.getCtr() : BigDecimal.ZERO);
             item.put("cvr", metric.getCvr() != null ? metric.getCvr() : BigDecimal.ZERO);
             result.add(item);
@@ -517,8 +519,7 @@ public class DataService {
 
             // 将时间戳转换为可读格式
             map.put("behaviorTimeStr", behavior.getCreateTime() != null
-                    ? behavior.getCreateTime().toString().replace("T", " ").substring(0, 19)
-                    : "");
+                    ? behavior.getCreateTime().form阿at(TIME_FMT) : "");
 
             // 添加中文行为类型描述
             String typeDesc = "";
